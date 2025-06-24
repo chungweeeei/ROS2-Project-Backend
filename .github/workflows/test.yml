@@ -1,9 +1,6 @@
 name: Test (Container)
 on:
   push:
-    branches:
-      - main
-      - release/**
 jobs:
   test:
     environment: testing
@@ -23,41 +20,3 @@ jobs:
       - name: Run tests
         working-directory: ./authenticate-service
         run: go test -v ./cmd/api/...
-  push-to-registry:
-    environment: testing
-    name: Push to Docker Registry
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-      attestations: write
-      id-token: write
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-      - name: Login to Docker Registry
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: chungweeeei/ros2-project-authenticate
-          tags: |
-            type=raw,value=latest
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@v6
-        with:
-          context: ./authenticate-service
-          dockerfile: ./authenticate-service/Dockerfile
-          push: true
-          platforms: linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
