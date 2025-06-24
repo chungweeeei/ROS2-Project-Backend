@@ -22,7 +22,7 @@ func Test_routes_exists(t *testing.T) {
 		routeExists(t, ginEngine, route)
 	}
 
-	fmt.Println("All routes exist as expected")
+	fmt.Printf("\033[32m✅ All routes exist as expected\033[0m\n")
 }
 
 func routeExists(t *testing.T, engine *gin.Engine, route map[string]string) {

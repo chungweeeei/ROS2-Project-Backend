@@ -10,8 +10,8 @@ import (
 func (app *Config) Authenticate(c *gin.Context) {
 
 	var loginRequest struct {
-		Email    string `json:"email";binding:"required,email"`
-		Password string `json:"password";binding:"required"`
+		Email    string `json:"email" binding:"required,email"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	err := c.ShouldBindBodyWithJSON(&loginRequest)
@@ -24,7 +24,7 @@ func (app *Config) Authenticate(c *gin.Context) {
 	}
 
 	// start validate credentials
-	user, err := app.Models.User.GetByEmail(loginRequest.Email)
+	user, err := app.Repo.GetByEmail(loginRequest.Email)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error":   true,
@@ -64,9 +64,9 @@ func (app *Config) Authenticate(c *gin.Context) {
 func (app *Config) Signup(c *gin.Context) {
 
 	var userRequest struct {
-		Email    string `json:"email";binding:"required,email"`
-		Username string `json:"username";binding:"required"`
-		Password string `json:"password";binding:"required"`
+		Email    string `json:"email" binding:"required,email"`
+		Username string `json:"username" binding:"required"`
+		Password string `json:"password" binding:"required"`
 	}
 
 	err := c.ShouldBindBodyWithJSON(&userRequest)
@@ -87,7 +87,7 @@ func (app *Config) Signup(c *gin.Context) {
 		return
 	}
 
-	err = app.Models.User.Insert(data.User{
+	_, err = app.Repo.Insert(data.User{
 		Email:    userRequest.Email,
 		Username: userRequest.Username,
 		Password: hashedPassword,
@@ -102,6 +102,7 @@ func (app *Config) Signup(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
+		"error":   false,
 		"message": "User created successfully",
 	})
 }

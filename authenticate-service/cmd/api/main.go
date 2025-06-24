@@ -11,8 +11,7 @@ import (
 const serverPort = "80"
 
 type Config struct {
-	DB     *gorm.DB
-	Models data.Models
+	Repo data.Repository
 }
 
 func main() {
@@ -26,15 +25,8 @@ func main() {
 	fmt.Println("Connected to database successfully")
 
 	// Step2: setup the config
-	models, err := data.New(conn)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	app := Config{
-		DB:     conn,
-		Models: models,
-	}
+	app := Config{}
+	app.setupRepo(conn)
 
 	// Step3: setup the server
 	server := &http.Server{
@@ -47,4 +39,13 @@ func main() {
 		fmt.Println("Error starting server:", err)
 	}
 
+}
+
+func (app *Config) setupRepo(conn *gorm.DB) {
+	db, err := data.NewPostgresRepository(conn)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	app.Repo = db
 }

@@ -1,12 +1,20 @@
 package main
 
 import (
+	"authenticate-service/data"
 	"fmt"
 	"os"
 	"testing"
+
+	"github.com/gin-gonic/gin"
 )
 
+var testApp Config
+
 func setup() {
+	gin.SetMode(gin.TestMode)
+	repo, _ := data.NewPostgresTestRepository(nil)
+	testApp.Repo = repo
 	fmt.Println("Setting up the testing environment...")
 }
 
