@@ -18,4 +18,5 @@ jobs:
         run: go mod download
 
       - name: Run tests
-        run: go test -v ./authenticate-service/cmd/api/...
+        working-directory: ./authenticate-service
+        run: go test -v ./cmd/api/...
