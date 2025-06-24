@@ -33,3 +33,6 @@ go.work.sum
 
 # MacOS
 .DS_Store
+
+# database folder
+/db-data
