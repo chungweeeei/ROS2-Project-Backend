@@ -1,22 +1,41 @@
 name: Test (Container)
 on:
   push:
+    - main
+    - release/**
 jobs:
   test:
+    environment: testing
     runs-on: ubuntu-latest
     env:
       DB_NAME: go_db
     steps:
-      - name: Download repository
+      - name: Checkout the repository
         uses: actions/checkout@v4
-      - name: Setup Go
+      - name: Setup Go environment
         uses: actions/setup-go@v4
         with:
           go-version: "1.24"
-      - name: Install dependencies
+      - name: Install go dependencies
         working-directory: ./authenticate-service
         run: go mod download
-
       - name: Run tests
         working-directory: ./authenticate-service
         run: go test -v ./cmd/api/...
+  push-to-registry:
+    name: Push to Docker Registry
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+      attestations: write
+      id-token: write
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Login to Docker Registry
+        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}

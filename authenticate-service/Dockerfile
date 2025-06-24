@@ -14,6 +14,6 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /app/authApp /app/authApp
+COPY --from=builder /app/authApp /app
 
 CMD ["/app/authApp"]
