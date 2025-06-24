@@ -6,19 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DB_NAME: go_db
-    services:
-      postgres:
-        image: postgres
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-          POSTGRES_DB: go_db
     steps:
       - name: Download repository
         uses: actions/checkout@v4
-      - name: Install Dependencies
-        run: go mod install
-      - name: Output Information
-        run: echo "Testing Workflow"
+      - name: Install dependencies
+        run: go mod download
