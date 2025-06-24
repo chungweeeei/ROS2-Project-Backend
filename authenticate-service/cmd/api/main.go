@@ -4,6 +4,7 @@ import (
 	"authenticate-service/data"
 	"fmt"
 	"net/http"
+	"os"
 
 	"gorm.io/gorm"
 )
@@ -20,9 +21,8 @@ func main() {
 	conn, err := connectToDB()
 	if err != nil {
 		fmt.Println("Error connecting to database:", err)
+		os.Exit(1)
 	}
-
-	fmt.Println("Connected to database successfully")
 
 	// Step2: setup the config
 	app := Config{}

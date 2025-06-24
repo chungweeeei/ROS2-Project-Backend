@@ -5,24 +5,24 @@ on:
       - main
       - release/**
 jobs:
-  # test:
-  #   environment: testing
-  #   runs-on: ubuntu-latest
-  #   env:
-  #     DB_NAME: go_db
-  #   steps:
-  #     - name: Checkout the repository
-  #       uses: actions/checkout@v4
-  #     - name: Setup Go environment
-  #       uses: actions/setup-go@v4
-  #       with:
-  #         go-version: "1.24"
-  #     - name: Install go dependencies
-  #       working-directory: ./authenticate-service
-  #       run: go mod download
-  #     - name: Run tests
-  #       working-directory: ./authenticate-service
-  #       run: go test -v ./cmd/api/...
+  test:
+    environment: testing
+    runs-on: ubuntu-latest
+    env:
+      DB_NAME: go_db
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Setup Go environment
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.24"
+      - name: Install go dependencies
+        working-directory: ./authenticate-service
+        run: go mod download
+      - name: Run tests
+        working-directory: ./authenticate-service
+        run: go test -v ./cmd/api/...
   push-to-registry:
     environment: testing
     name: Push to Docker Registry
