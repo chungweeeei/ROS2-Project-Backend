@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . /app
 
 RUN go mod download
-RUN CGO_ENABLED=0 go build -o authApp /app/api
+RUN CGO_ENABLED=0 go build -o authApp /app/cmd/api
 RUN chmod +x /app/authApp
 
 # build a tiny docker image
@@ -16,4 +16,4 @@ WORKDIR /app
 
 COPY --from=builder /app/authApp /app/authApp
 
-CMD ["bash"]
+CMD ["/app/authApp"]

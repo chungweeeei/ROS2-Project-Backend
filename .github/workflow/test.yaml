@@ -1,0 +1,24 @@
+name: Test (Container)
+on:
+  push:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DB_NAME: go_db
+    service:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: go_db
+    steps:
+      - name: Download repository
+        uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: go mod download
+      - name: Output Information
+        run: echo "Testing Workflow"
