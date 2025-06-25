@@ -34,6 +34,7 @@ func main() {
 		Handler: app.routes(),
 	}
 
+	// Step4: start the server
 	err = server.ListenAndServe()
 	if err != nil {
 		fmt.Println("Error starting server:", err)
