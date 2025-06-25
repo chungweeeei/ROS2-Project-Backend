@@ -36,4 +36,5 @@ jobs:
         working-directory: ./logger-service
         run: go mod download
       - name: Run tests
+        working-directory: ./logger-service
         run: go test -v ./cmd/api/...
