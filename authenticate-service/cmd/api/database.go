@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"gorm.io/driver/postgres"
@@ -11,8 +12,7 @@ import (
 
 func connectToDB() (*gorm.DB, error) {
 
-	// dsn := fmt.Sprintf("host=postgres user=root password=root dbname=%s port=5432 sslmode=disable", os.Getenv("DB_NAME"))
-	dsn := "host=localhost user=root password=root dbname=go_db port=5432 sslmode=disable"
+	dsn := fmt.Sprintf("host=postgres user=root password=root dbname=%s port=5432 sslmode=disable", os.Getenv("DB_NAME"))
 
 	var counts int = 0
 	for {
