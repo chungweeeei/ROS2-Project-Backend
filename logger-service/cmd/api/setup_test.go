@@ -1,8 +1,8 @@
 package main
 
 import (
-	"authenticate-service/data"
 	"fmt"
+	"logger-service/data"
 	"os"
 	"testing"
 
@@ -15,16 +15,14 @@ func setup() {
 	gin.SetMode(gin.TestMode)
 	repo, _ := data.NewPostgresTestRepository(nil)
 	testApp.Repo = repo
-	fmt.Println("Setting up the authenticate-service testing environment...")
+	fmt.Println("Setting up the logger-service testing environment...")
 }
 
 func teardown() {
-	fmt.Println("Tearing down the authenticate-service testing environment...")
+	fmt.Println("Tearing down the logger-service testing environment...")
 }
 
-// TestMain function is used to set up the environment before running tests.
 func TestMain(m *testing.M) {
-
 	setup()
 	code := m.Run() // Run the tests
 	teardown()

@@ -2,7 +2,11 @@ package main
 
 import (
 	"authenticate-service/data"
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -88,6 +92,16 @@ func (app *Config) Authenticate(c *gin.Context) {
 		return
 	}
 
+	// call logger service to log the authentication event
+	err = app.logAuthenticationEvent("authenticate-service", "info", fmt.Sprintf("User %s logged in at %v", user.Email, time.Now().Format(time.RFC3339)))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error:   true,
+			Message: "Failed to log authentication event",
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, LoginResponse{
 		Error:   false,
 		Message: "Authentication successful",
@@ -146,4 +160,39 @@ func (app *Config) Signup(c *gin.Context) {
 		Error:   false,
 		Message: "User created successfully",
 	})
+}
+
+func (app *Config) logAuthenticationEvent(name, level, message string) error {
+
+	var entry struct {
+		Name    string `json:"name"`
+		Level   string `json:"level"`
+		Message string `json:"message"`
+	}
+
+	entry.Name = name
+	entry.Level = level
+	entry.Message = message
+
+	// Prepare the request to the logger service
+	jsonData, _ := json.MarshalIndent(entry, "", "\t")
+
+	// Here will call the remote logger service which isn't running when testing.
+	// How to mock the request?
+	logServiceURL := "http://logger-service/v1/log"
+
+	// register the http request
+	req, err := http.NewRequest("POST", logServiceURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return err
+	}
+
+	// Register the http client and send the request
+	// client := &http.Client{}
+	_, err = app.Client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

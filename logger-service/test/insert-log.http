@@ -1,0 +1,8 @@
+POST http://localhost:8081/v1/log
+Content-Type: application/json
+
+{
+    "name": "test-service",
+    "level": "info",
+    "message": "This is the second test log message"
+}

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"authenticate-service/data"
 	"fmt"
+	"logger-service/data"
 	"net/http"
 	"os"
 
@@ -12,8 +12,7 @@ import (
 const serverPort = "80"
 
 type Config struct {
-	Repo   data.Repository
-	Client *http.Client
+	Repo data.Repository
 }
 
 func main() {
@@ -26,9 +25,7 @@ func main() {
 	}
 
 	// Step2: setup the config
-	app := Config{
-		Client: &http.Client{},
-	}
+	app := Config{}
 	app.setupRepo(conn)
 
 	// Step3: setup the server
@@ -42,7 +39,6 @@ func main() {
 	if err != nil {
 		fmt.Println("Error starting server:", err)
 	}
-
 }
 
 func (app *Config) setupRepo(conn *gorm.DB) {
