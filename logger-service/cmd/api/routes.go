@@ -26,6 +26,7 @@ func (app *Config) routes() http.Handler {
 		AllowCredentials: true,
 	}))
 
+	// Need to add middleware for authentication
 	apiV1 := e.Group("/v1")
 	{
 		apiV1.GET("/logs", app.ReadAllLogs)
