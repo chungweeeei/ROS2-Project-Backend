@@ -12,7 +12,8 @@ import (
 const serverPort = "80"
 
 type Config struct {
-	Repo data.Repository
+	Repo   data.Repository
+	Client *http.Client
 }
 
 func main() {
@@ -25,7 +26,9 @@ func main() {
 	}
 
 	// Step2: setup the config
-	app := Config{}
+	app := Config{
+		Client: &http.Client{},
+	}
 	app.setupRepo(conn)
 
 	// Step3: setup the server
