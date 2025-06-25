@@ -48,7 +48,7 @@ func Test_Authenticate(t *testing.T) {
 		}
 	})
 
-	testApp.Client = client
+	testApp.Clients.LogHTTPClient = client
 
 	// create test user request
 	postBody := map[string]interface{}{

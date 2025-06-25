@@ -29,7 +29,7 @@ func (app *Config) routes() http.Handler {
 	apiV1 := e.Group("/v1")
 	{
 		apiV1.GET("/logs", app.ReadAllLogs)
-		apiV1.POST("/log", app.WriteLog)
+		apiV1.POST("/log", app.WriteLogViaHTTP)
 	}
 
 	docs.SwaggerInfo.Title = "Logger Service API"

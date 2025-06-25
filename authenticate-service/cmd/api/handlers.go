@@ -2,13 +2,17 @@ package main
 
 import (
 	"authenticate-service/data"
+	"authenticate-service/logs"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Request models
@@ -93,7 +97,8 @@ func (app *Config) Authenticate(c *gin.Context) {
 	}
 
 	// call logger service to log the authentication event
-	err = app.logAuthenticationEvent("authenticate-service", "info", fmt.Sprintf("User %s logged in at %v", user.Email, time.Now().Format(time.RFC3339)))
+	// err = app.logAuthenticationEvent("authenticate-service", "info", fmt.Sprintf("User %s logged in at %v", user.Email, time.Now().Format(time.RFC3339)))
+	err = app.logAuthenticationEventViaGRPC("authenticate-service", "info", fmt.Sprintf("User %s logged in at %v", user.Email, time.Now().Format(time.RFC3339)))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Error:   true,
@@ -164,18 +169,18 @@ func (app *Config) Signup(c *gin.Context) {
 
 func (app *Config) logAuthenticationEvent(name, level, message string) error {
 
-	var entry struct {
+	var logPayload struct {
 		Name    string `json:"name"`
 		Level   string `json:"level"`
 		Message string `json:"message"`
 	}
 
-	entry.Name = name
-	entry.Level = level
-	entry.Message = message
+	logPayload.Name = name
+	logPayload.Level = level
+	logPayload.Message = message
 
 	// Prepare the request to the logger service
-	jsonData, _ := json.MarshalIndent(entry, "", "\t")
+	jsonData, _ := json.MarshalIndent(logPayload, "", "\t")
 
 	// Here will call the remote logger service which isn't running when testing.
 	// How to mock the request?
@@ -189,7 +194,35 @@ func (app *Config) logAuthenticationEvent(name, level, message string) error {
 
 	// Register the http client and send the request
 	// client := &http.Client{}
-	_, err = app.Client.Do(req)
+	_, err = app.Clients.LogHTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (app *Config) logAuthenticationEventViaGRPC(name, level, message string) error {
+
+	// apply credentials (set empty credentials for insecure connection)
+	conn, err := grpc.NewClient("logger-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	// register the client
+	c := logs.NewLogServiceClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	_, err = c.WriteLog(ctx, &logs.LogRequest{
+		LogEntry: &logs.Log{
+			Name:    name,
+			Level:   level,
+			Message: message,
+		},
+	})
 	if err != nil {
 		return err
 	}

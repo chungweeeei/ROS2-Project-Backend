@@ -2,6 +2,6 @@ POST http://localhost:8080/v1/authenticate/login
 Content-Type: application/json
 
 {
-    "Email": "test@test.com",
+    "Email": "test1@test.com",
     "Password": "tester"
 }
