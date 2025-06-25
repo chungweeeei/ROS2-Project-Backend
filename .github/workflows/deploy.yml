@@ -1,7 +1,10 @@
 name: Deploy (Container)
 on:
+  push:
+    branches:
+      - main
   pull_request:
-    types: [synchronize]
+    types: [opened, synchronize, reopened]
 jobs:
   test:
     environment: testing
