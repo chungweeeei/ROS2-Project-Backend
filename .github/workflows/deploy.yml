@@ -59,7 +59,7 @@ jobs:
           tags: |
             type=raw,value=latest
       - name: Build and push authenticate-service Docker image
-        id: push
+        id: push-auth
         uses: docker/build-push-action@v6
         with:
           context: ./authenticate-service
@@ -76,7 +76,7 @@ jobs:
           tags: |
             type=raw,value=latest
       - name: Build and push logger-service Docker image
-        id: push
+        id: push-logger
         uses: docker/build-push-action@v6
         with:
           context: ./logger-service
