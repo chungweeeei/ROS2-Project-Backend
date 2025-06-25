@@ -36,4 +36,4 @@ jobs:
         working-directory: ./logger-service
         run: go mod download
       - name: Run tests
-        run: echo "No tests for logger-service yet"
+        run: go test -v ./cmd/api/...

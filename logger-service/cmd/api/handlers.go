@@ -66,7 +66,7 @@ func (app *Config) WriteLog(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, WriteLogResponse{
+	c.JSON(http.StatusCreated, WriteLogResponse{
 		Error:   false,
 		Message: "Log written successfully",
 	})
@@ -93,6 +93,6 @@ func (app *Config) ReadAllLogs(c *gin.Context) {
 
 	c.JSON(http.StatusOK, ReadLogsResponse{
 		Error: false,
-		Logs:  logEntries,
+		Logs:  *logEntries,
 	})
 }

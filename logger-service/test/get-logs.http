@@ -1,2 +1,2 @@
-GET http://localhost:8081/v1/logs
+GET http://localhost:80/v1/logs
 Content-Type: application/json

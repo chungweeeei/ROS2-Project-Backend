@@ -48,7 +48,7 @@ func (p *PostgresRepository) Insert(logEntry LogEntry) error {
 	return nil
 }
 
-func (p *PostgresRepository) GetAll() ([]LogEntry, error) {
+func (p *PostgresRepository) GetAll() (*[]LogEntry, error) {
 
 	var logEntries []LogEntry
 	result := db.Find(&logEntries)
@@ -56,5 +56,5 @@ func (p *PostgresRepository) GetAll() ([]LogEntry, error) {
 		return nil, errors.New("failed to retrieve log entries")
 	}
 
-	return logEntries, nil
+	return &logEntries, nil
 }
