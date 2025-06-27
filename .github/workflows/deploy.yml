@@ -1,12 +1,15 @@
-# name: Deploy (Container)
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
-#     types: [synchronize]
-# jobs:
-#   test:
+name: Deploy (Container)
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [synchronize]
+jobs:
+  test:
+    steps:
+      - name: Output the information
+        run: echo "This is a placeholder for the test job. Replace with actual test steps."
 #     environment: testing
 #     runs-on: ubuntu-latest
 #     env:
