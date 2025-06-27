@@ -11,9 +11,14 @@ import (
 
 const serverPort = "80"
 
+type Clients struct {
+	LogHTTPClient *http.Client
+	LoggRPCClient LogServiceClient
+}
+
 type Config struct {
-	Repo   data.Repository
-	Client *http.Client
+	Repo    data.Repository
+	Clients Clients
 }
 
 func main() {
@@ -25,9 +30,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	logClient := NewgRPCLogClient("logger-service:50001")
+
 	// Step2: setup the config
 	app := Config{
-		Client: &http.Client{},
+		Clients: Clients{
+			LogHTTPClient: &http.Client{},
+			LoggRPCClient: logClient,
+		},
 	}
 	app.setupRepo(conn)
 

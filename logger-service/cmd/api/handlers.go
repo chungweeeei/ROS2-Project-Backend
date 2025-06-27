@@ -40,7 +40,7 @@ type ErrorResponse struct {
 // @Failure 400 {object} ErrorResponse "Bad Request - Invalid request body"
 // @Failure 500 {object} ErrorResponse "Internal Server Error - Failed to write log"
 // @Router /v1/log [post]
-func (app *Config) WriteLog(c *gin.Context) {
+func (app *Config) WriteLogViaHTTP(c *gin.Context) {
 
 	var request WriteLogRequest
 	if err := c.ShouldBindJSON(&request); err != nil {

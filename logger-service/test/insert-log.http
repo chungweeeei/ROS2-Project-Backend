@@ -4,5 +4,5 @@ Content-Type: application/json
 {
     "name": "test-service",
     "level": "info",
-    "message": "This is the second test log message"
+    "message": "This is the test log message"
 }
