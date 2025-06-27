@@ -9,7 +9,10 @@ import (
 	"gorm.io/gorm"
 )
 
-const serverPort = "80"
+const (
+	serverPort = "80"
+	gRPCPort   = "50001"
+)
 
 type Clients struct {
 	LogHTTPClient *http.Client
@@ -46,6 +49,9 @@ func main() {
 		Addr:    fmt.Sprintf(":%s", serverPort),
 		Handler: app.routes(),
 	}
+
+	// Start gRPC server
+	go app.gRPCListen()
 
 	// Step4: start the server
 	err = server.ListenAndServe()

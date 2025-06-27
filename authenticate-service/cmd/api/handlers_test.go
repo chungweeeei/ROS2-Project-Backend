@@ -1,7 +1,7 @@
 package main
 
 import (
-	"authenticate-service/logs"
+	"authenticate-service/proto/logs"
 	"bytes"
 	"context"
 	"encoding/json"

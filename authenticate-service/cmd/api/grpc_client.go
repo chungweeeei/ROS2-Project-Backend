@@ -1,7 +1,7 @@
 package main
 
 import (
-	"authenticate-service/logs"
+	"authenticate-service/proto/logs"
 	"context"
 
 	"google.golang.org/grpc"
