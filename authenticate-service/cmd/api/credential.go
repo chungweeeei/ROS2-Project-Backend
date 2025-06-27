@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -33,4 +34,31 @@ func generateJWTToken(email string) (string, error) {
 
 	// key should be byte slice
 	return token.SignedString([]byte(secretKey))
+}
+
+func verifyToken(token string) error {
+
+	// keyFn determine how to verify the token
+	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+
+		// check signing method is HMAC
+		_, ok := token.Method.(*jwt.SigningMethodHMAC)
+		if !ok {
+			return nil, errors.New("Unexpected signing method")
+		}
+
+		// return verified signing key
+		return []byte(secretKey), nil
+	})
+
+	if err != nil {
+		return errors.New("Could not parse token.")
+	}
+
+	tokenIsValid := parsedToken.Valid
+	if !tokenIsValid {
+		return errors.New("Token is not valid.")
+	}
+
+	return nil
 }

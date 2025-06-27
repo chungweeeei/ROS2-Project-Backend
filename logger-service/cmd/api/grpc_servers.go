@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"logger-service/data"
-	"logger-service/logs"
+	"logger-service/proto/logs"
 	"net"
 
 	"google.golang.org/grpc"
