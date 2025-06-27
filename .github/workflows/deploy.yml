@@ -1,87 +1,87 @@
-name: Deploy (Container)
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [synchronize]
-jobs:
-  test:
-    environment: testing
-    runs-on: ubuntu-latest
-    env:
-      DB_NAME: go_db
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-      - name: Setup Go environment
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.24"
-      - name: Install authenticate-service dependencies
-        working-directory: ./authenticate-service
-        run: go mod download
-      - name: Run authenticate-service unit tests
-        working-directory: ./authenticate-service
-        run: go test -v ./cmd/api/...
-      - name: Install logger-service dependencies
-        working-directory: ./logger-service
-        run: go mod download
-      - name: Run logger-service unit tests
-        working-directory: ./logger-service
-        run: go test -v ./cmd/api/...
-  push-to-registry:
-    environment: testing
-    name: Push to Docker Registry
-    runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-      attestations: write
-      id-token: write
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-      - name: Login to Docker Registry
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta-auth
-        uses: docker/metadata-action@v5
-        with:
-          images: chungweeeei/ros2-project-authenticate
-          tags: |
-            type=raw,value=latest
-      - name: Build and push authenticate-service Docker image
-        id: push-auth
-        uses: docker/build-push-action@v6
-        with:
-          context: ./authenticate-service
-          dockerfile: ./authenticate-service/Dockerfile
-          push: true
-          platforms: linux/arm64
-          tags: ${{ steps.meta-auth.outputs.tags }}
-          labels: ${{ steps.meta-auth.outputs.labels }}
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta-logger
-        uses: docker/metadata-action@v5
-        with:
-          images: chungweeeei/ros2-project-logger
-          tags: |
-            type=raw,value=latest
-      - name: Build and push logger-service Docker image
-        id: push-logger
-        uses: docker/build-push-action@v6
-        with:
-          context: ./logger-service
-          dockerfile: ./logger-service/Dockerfile
-          push: true
-          platforms: linux/arm64
-          tags: ${{ steps.meta-logger.outputs.tags }}
-          labels: ${{ steps.meta-logger.outputs.labels }}
+# name: Deploy (Container)
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     types: [synchronize]
+# jobs:
+#   test:
+#     environment: testing
+#     runs-on: ubuntu-latest
+#     env:
+#       DB_NAME: go_db
+#     steps:
+#       - name: Checkout the repository
+#         uses: actions/checkout@v4
+#       - name: Setup Go environment
+#         uses: actions/setup-go@v4
+#         with:
+#           go-version: "1.24"
+#       - name: Install authenticate-service dependencies
+#         working-directory: ./authenticate-service
+#         run: go mod download
+#       - name: Run authenticate-service unit tests
+#         working-directory: ./authenticate-service
+#         run: go test -v ./cmd/api/...
+#       - name: Install logger-service dependencies
+#         working-directory: ./logger-service
+#         run: go mod download
+#       - name: Run logger-service unit tests
+#         working-directory: ./logger-service
+#         run: go test -v ./cmd/api/...
+#   push-to-registry:
+#     environment: testing
+#     name: Push to Docker Registry
+#     runs-on: ubuntu-latest
+#     permissions:
+#       packages: write
+#       contents: read
+#       attestations: write
+#       id-token: write
+#     steps:
+#       - name: Checkout the repository
+#         uses: actions/checkout@v4
+#       - name: Login to Docker Registry
+#         uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+#         with:
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
+#       - name: Set up QEMU
+#         uses: docker/setup-qemu-action@v3
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v3
+#       - name: Extract metadata (tags, labels) for Docker
+#         id: meta-auth
+#         uses: docker/metadata-action@v5
+#         with:
+#           images: chungweeeei/ros2-project-authenticate
+#           tags: |
+#             type=raw,value=latest
+#       - name: Build and push authenticate-service Docker image
+#         id: push-auth
+#         uses: docker/build-push-action@v6
+#         with:
+#           context: ./authenticate-service
+#           dockerfile: ./authenticate-service/Dockerfile
+#           push: true
+#           platforms: linux/arm64
+#           tags: ${{ steps.meta-auth.outputs.tags }}
+#           labels: ${{ steps.meta-auth.outputs.labels }}
+#       - name: Extract metadata (tags, labels) for Docker
+#         id: meta-logger
+#         uses: docker/metadata-action@v5
+#         with:
+#           images: chungweeeei/ros2-project-logger
+#           tags: |
+#             type=raw,value=latest
+#       - name: Build and push logger-service Docker image
+#         id: push-logger
+#         uses: docker/build-push-action@v6
+#         with:
+#           context: ./logger-service
+#           dockerfile: ./logger-service/Dockerfile
+#           push: true
+#           platforms: linux/arm64
+#           tags: ${{ steps.meta-logger.outputs.tags }}
+#           labels: ${{ steps.meta-logger.outputs.labels }}
