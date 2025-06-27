@@ -1,7 +1,9 @@
 package main
 
 import (
+	"authenticate-service/logs"
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"google.golang.org/grpc"
 )
 
 // Define a Mock http client that allows us to mock the HTTP requests and responses
@@ -26,6 +29,27 @@ func NewTestClient(fn RoundTripFunc) *http.Client {
 		// we can substitute this with a mock or a stub depending on the test case
 		Transport: fn,
 	}
+}
+
+// Define a Mock LogServiceClient
+type MockLogServiceClient struct {
+	WriteLogFunc func(ctx context.Context, in *logs.LogRequest, opts ...grpc.CallOption) (*logs.LogResponse, error)
+	CallCount    int
+	LastRequest  *logs.LogRequest
+}
+
+func (m *MockLogServiceClient) WriteLog(ctx context.Context, req *logs.LogRequest, opts ...grpc.CallOption) (*logs.LogResponse, error) {
+	m.CallCount++
+	m.LastRequest = req
+
+	if m.WriteLogFunc != nil {
+		return m.WriteLogFunc(ctx, req)
+	}
+
+	// Default successful response
+	return &logs.LogResponse{
+		Result: "Log written successfully",
+	}, nil
 }
 
 func Test_Authenticate(t *testing.T) {
@@ -50,6 +74,16 @@ func Test_Authenticate(t *testing.T) {
 
 	testApp.Clients.LogHTTPClient = client
 
+	gRPCClient := &MockLogServiceClient{
+		WriteLogFunc: func(ctx context.Context, req *logs.LogRequest, opts ...grpc.CallOption) (*logs.LogResponse, error) {
+			return &logs.LogResponse{
+				Result: "Log written successfully",
+			}, nil
+		},
+	}
+
+	testApp.Clients.LoggRPCClient = gRPCClient
+
 	// create test user request
 	postBody := map[string]interface{}{
 		"email":    "test@test.com",
@@ -72,6 +106,8 @@ func Test_Authenticate(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to unmarshal response: %v", err)
 	}
+
+	fmt.Println("Response:", resp)
 
 	assert.Equal(t, resp["error"], false)
 	assert.Equal(t, resp["email"], "test@test.com")

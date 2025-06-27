@@ -11,8 +11,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 // Request models
@@ -204,19 +202,24 @@ func (app *Config) logAuthenticationEvent(name, level, message string) error {
 
 func (app *Config) logAuthenticationEventViaGRPC(name, level, message string) error {
 
-	// apply credentials (set empty credentials for insecure connection)
-	conn, err := grpc.NewClient("logger-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		return err
-	}
-	defer conn.Close()
+	/*
+		Register a grpc client with grpc.NewClient method. When you writing the handler unit test, it is hard to mock the grpc client.
+		Therefore we need to use dependency injection to inject the grpc client into the handler.
+		In order to do this, we need to define an interface for the grpc client and implement it in a struct.
+		Then we can mock the grpc client in the unit test.
 
-	// register the client
-	c := logs.NewLogServiceClient(conn)
+		conn, err := grpc.NewClient("logger-service:50001", grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			return err
+		}
+		defer conn.Close()
+		c := logs.NewLogServiceClient(conn)
+	*/
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	_, err = c.WriteLog(ctx, &logs.LogRequest{
+	_, err := app.Clients.LoggRPCClient.WriteLog(ctx, &logs.LogRequest{
 		LogEntry: &logs.Log{
 			Name:    name,
 			Level:   level,
