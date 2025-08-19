@@ -1,21 +1,27 @@
 package main
 
 import (
+	"auth-service/data"
 	"fmt"
 	"log"
-	"logger-service/data"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	_ "github.com/joho/godotenv/autoload" // Automatically load .env file
 )
 
-const serverPort = "3000"
+const (
+	serverPort = "3000"
+	gRPCPort   = "50001"
+)
 
 func main() {
-
+	// init database engine
 	db := initDB()
 
+	// init logger instance
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
@@ -33,6 +39,9 @@ func main() {
 
 	// listen for errors
 	go app.listenForErrors()
+
+	// gRPC listener
+	go app.gRPCListener()
 
 	// execute api server
 	app.serve()
@@ -54,7 +63,6 @@ func (app *Config) serve() {
 }
 
 func (app *Config) listenForErrors() {
-
 	for {
 		select {
 		case err := <-app.ErrorChan:
@@ -64,7 +72,6 @@ func (app *Config) listenForErrors() {
 			return
 		}
 	}
-
 }
 
 func (app *Config) listenForShutdown() {

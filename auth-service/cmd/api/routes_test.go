@@ -15,8 +15,8 @@ func Test_Routes_Exist(t *testing.T) {
 		URL    string
 		Method string
 	}{
-		{URL: "/v1/logs", Method: "GET"},
-		{URL: "/v1/log", Method: "POST"},
+		{URL: "/v1/login", Method: "POST"},
+		{URL: "/v1/signup", Method: "POST"},
 	}
 
 	for _, route := range routes {
@@ -34,12 +34,11 @@ func routeExists(t *testing.T, engine *gin.Engine, route struct {
 	found := false
 
 	for _, r := range engine.Routes() {
-
+		// Check if the route matches the expected URL and method
 		if r.Method == route.Method && r.Path == route.URL {
 			found = true
 			break
 		}
-
 	}
 
 	if !found {

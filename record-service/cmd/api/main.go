@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"log"
-	"logger-service/data"
 	"net/http"
 	"os"
 	"os/signal"
+	"record-service/data"
 	"syscall"
 )
 
@@ -36,6 +36,7 @@ func main() {
 
 	// execute api server
 	app.serve()
+
 }
 
 func (app *Config) serve() {
@@ -60,7 +61,6 @@ func (app *Config) listenForErrors() {
 		case err := <-app.ErrorChan:
 			app.ErrorLog.Println(err)
 		case <-app.ErrorDoneChan:
-			// close the goroutine
 			return
 		}
 	}

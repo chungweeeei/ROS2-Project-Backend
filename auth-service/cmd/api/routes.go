@@ -22,8 +22,8 @@ func (app *Config) routes() http.Handler {
 
 	apiV1 := e.Group("/v1")
 	{
-		apiV1.GET("/logs", app.ReadAllLogs)
-		apiV1.POST("/log", app.WriteLog)
+		apiV1.POST("/login", app.Authenticate)
+		apiV1.POST("/signup", app.Signup)
 	}
 
 	return e

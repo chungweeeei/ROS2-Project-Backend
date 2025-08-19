@@ -1,8 +1,8 @@
 package main
 
 import (
+	"auth-service/data"
 	"log"
-	"logger-service/data"
 	"os"
 	"testing"
 
@@ -21,12 +21,11 @@ func setup() {
 		ErrorChan:     make(chan error),
 		ErrorDoneChan: make(chan bool),
 	}
-
-	testApp.InfoLog.Println("Setting up the logger service testing environment...")
+	testApp.InfoLog.Println("Setting up the auth service testing environment...")
 }
 
 func teardown() {
-	testApp.InfoLog.Println("Tearing down the logger service testing environment...")
+	testApp.InfoLog.Println("Tearing down the auth service testing environment...")
 }
 
 func TestMain(m *testing.M) {
@@ -35,4 +34,5 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 	teardown()
 	os.Exit(code)
+
 }

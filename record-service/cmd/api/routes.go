@@ -22,8 +22,9 @@ func (app *Config) routes() http.Handler {
 
 	apiV1 := e.Group("/v1")
 	{
-		apiV1.GET("/logs", app.ReadAllLogs)
-		apiV1.POST("/log", app.WriteLog)
+		apiV1.GET("/records", app.FetchAllRecords)
+		apiV1.POST("/record", app.WriteRecord)
+		// apiV1.DELETE("/record/:id")
 	}
 
 	return e
