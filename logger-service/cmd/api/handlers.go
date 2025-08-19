@@ -7,92 +7,52 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Request models
 type WriteLogRequest struct {
-	Name    string `json:"name" binding:"required" example:"test-service"`
-	Level   string `json:"level" binding:"required" example:"info"`
 	Message string `json:"message" binding:"required" example:"This is a test log message"`
+	Level   string `json:"level" binding:"required" example:"info"`
 }
 
-// Response models
-type WriteLogResponse struct {
-	Error   bool   `json:"error" example:"false"`
-	Message string `json:"message" example:"Log written successfully"`
+type LogsResponse struct {
+	Logs []data.Log `json:"logs"`
 }
 
-type ReadLogsResponse struct {
-	Error bool            `json:"error" example:"false"`
-	Logs  []data.LogEntry `json:"logs"`
-}
+func (app *Config) ReadAllLogs(c *gin.Context) {
 
-type ErrorResponse struct {
-	Error   bool   `json:"error" example:"true"`
-	Message string `json:"message" example:"Error message"`
-}
-
-// @Summary Write a log message
-// @Description Write a log message to the logging service
-// @Tags Log
-// @version 1.0
-// @produce application/json
-// @Param request body WriteLogRequest true "Log message details"
-// @Success 200 {object} WriteLogResponse
-// @Failure 400 {object} ErrorResponse "Bad Request - Invalid request body"
-// @Failure 500 {object} ErrorResponse "Internal Server Error - Failed to write log"
-// @Router /v1/log [post]
-func (app *Config) WriteLogViaHTTP(c *gin.Context) {
-
-	var request WriteLogRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, ErrorResponse{
-			Error:   true,
-			Message: "Failed to parse request body",
-		})
-		return
-	}
-
-	logEntry := data.LogEntry{
-		Name:    request.Name,
-		Level:   request.Level,
-		Message: request.Message,
-	}
-
-	err := app.Repo.Insert(logEntry)
+	logs, err := app.Models.Log.GetAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{
-			Error:   true,
-			Message: "Failed to write log entry",
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to retrieve logs",
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, WriteLogResponse{
-		Error:   false,
-		Message: "Log written successfully",
+	c.JSON(http.StatusOK, LogsResponse{
+		Logs: logs,
 	})
 }
 
-// @Summary Read all logs
-// @Description Retrieve all log entries from the logging service
-// @Tags Log
-// @version 1.0
-// @produce application/json
-// @Success 200 {object} ReadLogsResponse
-// @Failure 500 {object} ErrorResponse "Internal Server Error - Failed to retrieve log entries"
-// @Router /v1/log [get]
-func (app *Config) ReadAllLogs(c *gin.Context) {
+func (app *Config) WriteLog(c *gin.Context) {
 
-	logEntries, err := app.Repo.GetAll()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, ErrorResponse{
-			Error:   true,
-			Message: "Failed to retrieve log entries",
+	var request WriteLogRequest
+	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "Failed to parse request body",
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, ReadLogsResponse{
-		Error: false,
-		Logs:  *logEntries,
+	err := app.Models.Log.Insert(data.Log{
+		Message: request.Message,
+		Level:   request.Level,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Failed to write log to database",
+		})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Log written successfully",
 	})
 }

@@ -1,0 +1,14 @@
+POST http://localhost:3000/v1/record
+Content-Type: application/json
+
+{
+    "side": "buy",
+    "stock_number": "2330",
+    "stock_name": "台積電",
+    "entry_price": 1165,
+    "exit_price": 1200,
+    "quantity": 1000,
+    "entry_time": "2025-08-10",
+    "exit_time": "2025-08-11",
+    "notes": "This is a test log"
+}
