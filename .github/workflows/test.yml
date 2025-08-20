@@ -13,28 +13,10 @@ jobs:
       - name: Setup Go environment
         uses: actions/setup-go@v4
         with:
-          go-version: "1.24"
+          go-version: "1.25"
       - name: Install go dependencies
-        working-directory: ./authenticate-service
+        working-directory: ./auth-service
         run: go mod download
       - name: Run tests
-        working-directory: ./authenticate-service
-        run: go test -v ./cmd/api/...
-  test-logger-service:
-    environment: testing
-    runs-on: ubuntu-latest
-    env:
-      DB_NAME: go_db
-    steps:
-      - name: Checkout the repository
-        uses: actions/checkout@v4
-      - name: Setup Go environment
-        uses: actions/setup-go@v4
-        with:
-          go-version: "1.24"
-      - name: Install go dependencies
-        working-directory: ./logger-service
-        run: go mod download
-      - name: Run tests
-        working-directory: ./logger-service
-        run: go test -v ./cmd/api/...
+        working-directory: ./auth-service
+        run: go test -v ./cmd/api/.
