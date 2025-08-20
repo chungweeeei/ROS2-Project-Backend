@@ -2,7 +2,7 @@ name: Test (Container)
 on:
   push:
 jobs:
-  test-authenticate-service:
+  test-auth-service:
     environment: testing
     runs-on: ubuntu-latest
     env:
@@ -19,4 +19,22 @@ jobs:
         run: go mod download
       - name: Run tests
         working-directory: ./auth-service
-        run: go test -v ./cmd/api/.
+        run: go test -race ./cmd/api/.
+  test-record-service:
+    environment: testing
+    runs-on: ubuntu-latest
+    env:
+      DB_NAME: go_db
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+      - name: Setup Go environment
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.25"
+      - name: Install go dependencies
+        working-directory: ./record-service
+        run: go mod download
+      - name: Run tests
+        working-directory: ./record-service
+        run: go test -race ./cmd/api/.
