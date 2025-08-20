@@ -8,12 +8,10 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
-	_ "github.com/joho/godotenv/autoload" // Automatically load .env file
 )
 
 const (
-	serverPort = "3000"
+	serverPort = "80"
 	gRPCPort   = "50001"
 )
 

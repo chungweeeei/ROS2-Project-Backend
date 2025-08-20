@@ -13,6 +13,8 @@ func (app *Config) routes() http.Handler {
 
 	e.Use(gin.Logger())
 	e.Use(gin.Recovery())
+	e.Use(app.Auth())
+
 	e.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"https://*", "http://*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},

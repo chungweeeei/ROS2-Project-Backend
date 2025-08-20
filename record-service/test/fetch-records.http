@@ -1,2 +1,3 @@
-GET http://localhost:3000/v1/records
+GET http://localhost:8081/v1/records
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJleHAiOjE3NTU2MDE0MjZ9.DIy1c9NoRTsQtdpd7RQsO_ngfyclhXBbgalo6Rt-ii8

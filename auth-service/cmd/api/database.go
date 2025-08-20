@@ -23,7 +23,7 @@ func initDB() *gorm.DB {
 func connectToDB() *gorm.DB {
 
 	count := 0
-	dsn := fmt.Sprintf("host=localhost user=%s password=%s dbname=%s sslmode=disable timezone=UTC connect_timeout=5", os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable timezone=UTC connect_timeout=5", os.Getenv("DB_HOST"), os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"), os.Getenv("DB_NAME"))
 
 	for {
 		// use gorm connect to postgres database

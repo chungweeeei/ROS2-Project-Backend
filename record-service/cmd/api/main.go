@@ -7,10 +7,14 @@ import (
 	"os"
 	"os/signal"
 	"record-service/data"
+	"record-service/gateways"
 	"syscall"
 )
 
-const serverPort = "3000"
+const (
+	serverPort = "80"
+	gRPCPort   = "50001"
+)
 
 func main() {
 
@@ -23,6 +27,7 @@ func main() {
 		DB:            db,
 		InfoLog:       infoLog,
 		ErrorLog:      errorLog,
+		AuthClient:    gateways.NewAuthClient(fmt.Sprintf("auth-service:%s", gRPCPort)),
 		Models:        data.New(db),
 		ErrorChan:     make(chan error),
 		ErrorDoneChan: make(chan bool),

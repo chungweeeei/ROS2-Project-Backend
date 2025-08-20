@@ -1,5 +1,6 @@
 POST http://localhost:3000/v1/record
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJleHAiOjE3NTU2NzkzNDd9.M1mzXSRLNEZ35CmvNT2nPMqul2RjYWB9oIDFpfyUQ0g
 
 {
     "side": "buy",

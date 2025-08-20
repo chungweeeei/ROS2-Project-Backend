@@ -40,8 +40,8 @@ func (app *Config) FetchAllRecords(c *gin.Context) {
 
 func (app *Config) WriteRecord(c *gin.Context) {
 
-	var reqeust WriteRecordRequest
-	if err := c.ShouldBindBodyWithJSON(&reqeust); err != nil {
+	var request WriteRecordRequest
+	if err := c.ShouldBindBodyWithJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "Failed to parse request body",
 		})
@@ -49,15 +49,16 @@ func (app *Config) WriteRecord(c *gin.Context) {
 	}
 
 	_, err := app.Models.TradeRecord.Insert(data.TradeRecord{
-		StockNumber: reqeust.StockNumber,
-		StockName:   reqeust.StockName,
-		Side:        reqeust.Side,
-		EntryPrice:  reqeust.EntryPrice,
-		ExitPrice:   reqeust.ExitPrice,
-		Quantity:    reqeust.Quantity,
-		EntryTime:   convertStringToTime(reqeust.EntryTime),
-		ExitTime:    convertStringToTime(reqeust.ExitTime),
-		Notes:       reqeust.Notes,
+		Email:       c.GetString("Email"),
+		StockNumber: request.StockNumber,
+		StockName:   request.StockName,
+		Side:        request.Side,
+		EntryPrice:  request.EntryPrice,
+		ExitPrice:   request.ExitPrice,
+		Quantity:    request.Quantity,
+		EntryTime:   convertStringToTime(request.EntryTime),
+		ExitTime:    convertStringToTime(request.ExitTime),
+		Notes:       request.Notes,
 	})
 
 	if err != nil {
